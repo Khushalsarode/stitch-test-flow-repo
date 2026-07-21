@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - dev
+      - staging
+      - "feature/**"
+      - "release/**"
+      - "hotfix/**"
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch context for Stitch demo (logged only)"
+        required: false
+        default: "main"
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - name: Run tests (JWT_SECRET intentionally omitted)
+        run: npm test
+        env:
+          NODE_ENV: test

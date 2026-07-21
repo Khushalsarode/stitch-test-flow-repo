@@ -1,0 +1,33 @@
+name: Create Stitch PR labels
+
+on:
+  push:
+    branches: [main, master]
+
+permissions:
+  issues: write
+
+jobs:
+  labels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = [
+              { name: "stitch", color: "7B61FF", description: "Opened by Stitch" },
+              { name: "auto-fix", color: "1D9A6C", description: "Autonomous CI fix" },
+            ];
+            for (const spec of labels) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: spec.name,
+                  color: spec.color,
+                  description: spec.description,
+                });
+              } catch (e) {
+                core.info(`Label ${spec.name}: ${e.message}`);
+              }
+            }

@@ -1,0 +1,21 @@
+name: Verify fix (green path)
+
+# Run manually AFTER Stitch merges a fix — proves JWT_SECRET guard + tests pass.
+on:
+  workflow_dispatch:
+
+jobs:
+  test-green:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - name: Run tests with JWT_SECRET set
+        run: npm test
+        env:
+          NODE_ENV: test
+          JWT_SECRET: stitch-demo-secret-for-green-ci

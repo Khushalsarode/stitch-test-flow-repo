@@ -1,0 +1,16 @@
+{
+  "name": "stitch-test-flow-repo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Deliberate CI failure repo for Stitch end-to-end testing before submission.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test auth/*.test.js"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
