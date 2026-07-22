@@ -1,0 +1,12 @@
+{
+  "version": "1.2.0",
+  "syncedFor": "stitch-live-testing",
+  "branchSuites": {
+    "main": "auth",
+    "dev": "cart",
+    "feature/**": "api",
+    "release/**": "config",
+    "hotfix/**": "utils"
+  },
+  "notes": "Re-push with npm run testrepo:setup from the Stitch monorepo to fire fresh CI runs."
+}

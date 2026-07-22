@@ -1,6 +1,6 @@
 /**
  * Shopping cart helpers for the Stitch demo shop.
- * NOTE: cartTotal has a deliberate off-by-one bug for the Stitch demo —
+ * NOTE: cartTotal has a deliberate off-by-one bug for Stitch demo v1.2 —
  * the loop reads one element past the end of the array.
  */
 

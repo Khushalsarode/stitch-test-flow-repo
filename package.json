@@ -1,8 +1,8 @@
 {
   "name": "stitch-test-flow-repo",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
-  "description": "Deliberate CI failure repo for Stitch end-to-end testing — each branch fails a different suite.",
+  "description": "Stitch live-test repo v1.2 — each branch fails a different suite (auth, cart, api, config, utils).",
   "type": "module",
   "scripts": {
     "test": "node --test auth/token.test.js cart/cart.test.js api/user.test.js config/limits.test.js utils/dates.test.js",

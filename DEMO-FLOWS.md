@@ -1,5 +1,7 @@
 # Demo flows — stitch-test-flow-repo
 
+**v1.2 re-sync:** after pulling these changes, run `npm run testrepo:setup` from the Stitch monorepo root to push all branches and fire fresh CI runs (new workflow run IDs for the monitor).
+
 Step-by-step paths to exercise **every** Stitch trust level on a real GitHub repo.
 
 ## Per-branch failure matrix (dynamic flows)

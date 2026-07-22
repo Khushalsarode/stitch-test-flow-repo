@@ -1,6 +1,6 @@
 /**
  * Runtime limits for the demo service.
- * NOTE: maxRetries has a deliberate wrong type for the Stitch demo —
+ * NOTE: maxRetries has a deliberate wrong type for Stitch demo v1.2 —
  * it is a string, but validateLimits (and the retry loop) require a
  * non-negative integer.
  */

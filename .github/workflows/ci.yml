@@ -58,7 +58,7 @@ jobs:
               *)            suite="auth" ;;
             esac
           fi
-          echo "Branch '$BRANCH' -> suite '$suite'"
+          echo "Stitch demo v1.2 — branch '$BRANCH' -> suite '$suite'"
           echo "suite=$suite" >> "$GITHUB_OUTPUT"
 
       - name: Run suite (deliberate failure until Stitch fixes it)

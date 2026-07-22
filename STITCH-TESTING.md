@@ -1,6 +1,8 @@
 # Stitch live testing checklist (submission)
 
-Repo: **`Khushalsarode/stitch-test-flow-repo`** · local copy: `testrepo/`
+Repo: **`Khushalsarode/stitch-test-flow-repo`** · local copy: `testrepo/` · **v1.2**
+
+After editing `testrepo/`, re-push with `npm run testrepo:setup` to trigger fresh CI runs on every branch.
 
 ## Quick start (Stitch monorepo root)
 

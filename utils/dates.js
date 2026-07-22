@@ -1,6 +1,6 @@
 /**
  * Date helpers for report generation.
- * NOTE: formatReportDate has a deliberate format bug for the Stitch demo —
+ * NOTE: formatReportDate has a deliberate format bug for Stitch demo v1.2 —
  * downstream reports require ISO 8601 (YYYY-MM-DD) but it returns
  * unpadded M/D/YYYY.
  */
