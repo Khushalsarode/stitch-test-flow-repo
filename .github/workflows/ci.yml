@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       suite:
-        description: "Test suite to run (auth|cart|api|config|utils|all)"
+        description: "Test suite to run (auth|cart|api|config|utils|hello|all)"
         required: false
         default: ""
 

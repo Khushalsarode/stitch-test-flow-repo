@@ -16,7 +16,22 @@ CI picks a different deliberately-broken test suite per branch, so every branch 
 | `release/**` | `config` | `maxRetries` is `"3"` (string, not int) | `config/limits.js` | `invalid limits config: maxRetries must be a non-negative integer` |
 | `hotfix/**` | `utils` | Date formatted `M/D/YYYY`, not ISO 8601 | `utils/dates.js` | `AssertionError ... expected: '2026-01-05'` |
 
-Manual dispatch of the **CI** workflow accepts a `suite` input (`auth|cart|api|config|utils|all`) to force any failure on any branch. `npm test` runs all five suites; `npm run test:<suite>` runs one.
+Manual dispatch of the **CI** workflow accepts a `suite` input (`auth|cart|api|config|utils|hello|all`) to force any failure on any branch. `npm test` runs all suites; `npm run test:<suite>` runs one.
+
+## Simple broken flow (fastest smoke test)
+
+Use this when you want **one click, one obvious fix** — no branch switching:
+
+| | |
+|---|---|
+| Workflow | **Simple broken flow** (`.github/workflows/simple-broken.yml`) |
+| Trigger | GitHub → Actions → **Simple broken flow** → **Run workflow** |
+| Bug | `hello/math.js` — `add(a, b)` returns `a + b + 1` |
+| Expected log | `AssertionError: Expected values to be strictly equal: 5 !== 4` |
+| Stitch fix | Remove the `+ 1` in `hello/math.js` |
+| Verify green | Actions → **Verify fix (green path)** → suite `hello` |
+
+Runs on `main` by default (workflow_dispatch). Stitch monitor picks it up like any other failed Actions run.
 
 ## Before you start
 

@@ -1,16 +1,17 @@
 {
   "name": "stitch-test-flow-repo",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
-  "description": "Stitch live-test repo v1.2 — each branch fails a different suite (auth, cart, api, config, utils).",
+  "description": "Stitch live-test repo — per-branch suites plus a one-click simple broken flow.",
   "type": "module",
   "scripts": {
-    "test": "node --test auth/token.test.js cart/cart.test.js api/user.test.js config/limits.test.js utils/dates.test.js",
+    "test": "node --test auth/token.test.js cart/cart.test.js api/user.test.js config/limits.test.js utils/dates.test.js hello/math.test.js",
     "test:auth": "node --test auth/token.test.js",
     "test:cart": "node --test cart/cart.test.js",
     "test:api": "node --test api/user.test.js",
     "test:config": "node --test config/limits.test.js",
-    "test:utils": "node --test utils/dates.test.js"
+    "test:utils": "node --test utils/dates.test.js",
+    "test:hello": "node --test hello/math.test.js"
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.2"

@@ -1,0 +1,23 @@
+name: Simple broken flow
+
+# One-button smoke test for Stitch — always fails until hello/math.js is fixed.
+# GitHub → Actions → "Simple broken flow" → Run workflow
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: simple-broken-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - name: Run hello suite (deliberate failure)
+        run: npm run test:hello

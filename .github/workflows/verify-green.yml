@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       suite:
-        description: "Suite to verify (auth|cart|api|config|utils|all)"
+        description: "Suite to verify (auth|cart|api|config|utils|hello|all)"
         required: false
         default: "all"
 
