@@ -2,11 +2,25 @@
 
 Step-by-step paths to exercise **every** Stitch trust level on a real GitHub repo.
 
+## Per-branch failure matrix (dynamic flows)
+
+CI picks a different deliberately-broken test suite per branch, so every branch produces a **distinct diagnosis and a distinct fix** — no two PRs look the same:
+
+| Branch | Suite | Deliberate bug | File Stitch must fix | Failure signature in logs |
+|--------|-------|----------------|----------------------|---------------------------|
+| `main` / `master` | `auth` | `JWT_SECRET` missing from CI env | `.github/workflows/ci.yml` (add env) | `JWT_SECRET must be set in CI` |
+| `dev` / `staging` | `cart` | Off-by-one loop (`i <= items.length`) | `cart/cart.js` | `TypeError: Cannot read properties of undefined (reading 'price')` |
+| `feature/**` | `api` | Missing null-check on `user.profile` | `api/user.js` | `TypeError: Cannot read properties of undefined (reading 'email')` |
+| `release/**` | `config` | `maxRetries` is `"3"` (string, not int) | `config/limits.js` | `invalid limits config: maxRetries must be a non-negative integer` |
+| `hotfix/**` | `utils` | Date formatted `M/D/YYYY`, not ISO 8601 | `utils/dates.js` | `AssertionError ... expected: '2026-01-05'` |
+
+Manual dispatch of the **CI** workflow accepts a `suite` input (`auth|cart|api|config|utils|all`) to force any failure on any branch. `npm test` runs all five suites; `npm run test:<suite>` runs one.
+
 ## Before you start
 
 1. Push all branches: from Stitch monorepo root run `npm run testrepo:setup`
 2. GitHub repo → **Settings → Actions → General** → allow Actions
-3. Stitch: `npm run db:seed`, `.env` with `GITHUB_TOKEN` + `GITHUB_WEBHOOK_SECRET`, Integrations → GitHub → Connect
+3. Stitch: `npm run db:seed`, `.env` with `GITHUB_TOKEN` (+ `GITHUB_WEBHOOK_SECRET` only if using webhooks), Integrations → GitHub → Connect
 4. Login `demo@stitch.dev` / `demo1234`
 
 ---
@@ -25,9 +39,9 @@ Step-by-step paths to exercise **every** Stitch trust level on a real GitHub rep
 
 **Dashboard → Main · live PR** (GitHub must be connected)
 
-- Expect: branch `stitch/fix-sim-*` on GitHub, PR opened, patch on `auth/token.js`
+- Expect on GitHub: a `stitch/fix-*` branch, a **tracking issue** with the diagnosis (labels `stitch`, `ci-failure`), and a PR referencing it with `Closes #N`
 - Fix Log → **View PR** link works
-- Optional: merge PR on GitHub, then run **Verify fix (green path)** workflow in Actions tab
+- Optional: merge PR on GitHub, then run **Verify fix (green path)** workflow (input `suite: auth`)
 
 ---
 
@@ -64,8 +78,9 @@ Step-by-step paths to exercise **every** Stitch trust level on a real GitHub rep
 
 **Dashboard → Dev · auto-merge** (`dev` branch)
 
+- CI on `dev` fails in the **cart** suite (off-by-one) — expect the fix PR to patch `cart/cart.js`
 - Expect: PR opened and auto-merged (personal repos usually allow this)
-- If auto-merge fails: check repo **Settings → General → Allow auto-merge** and that branch protection isn't blocking
+- If immediate auto-merge is blocked by branch protection: leave it — the **automation monitor** merges the PR once its checks pass (Settings → Automation → "Auto-merge on green")
 
 ---
 
@@ -120,12 +135,25 @@ Repo → **Settings → Webhooks → Add webhook**
 
 ---
 
+## Flow I — Scheduled monitor (no webhook, full automation)
+
+Best way to prove the loop runs unattended:
+
+1. Stitch → **Settings → Automation & monitoring** → enable, interval 2–5 minutes, keep auto-fix + auto-merge-on-green + GitHub issues on
+2. Push any commit to a branch (e.g. `dev`), or Actions → **CI** → Run workflow with a `suite` input — CI goes red
+3. Do nothing. Within one sweep the Dashboard status strip shows **Pipeline running** with live stages, and the repo gets issue + branch + PR without any click
+4. **Check GitHub now** on the Dashboard forces a sweep immediately
+5. After the PR's own CI passes, the monitor merges it (Autopilot branches) and closes the tracking issue
+
+---
+
 ## Local green test (after applying fix yourself)
 
 ```powershell
 cd testrepo
 $env:JWT_SECRET = "stitch-demo-secret"
-npm test   # should pass both tests
+npm test              # all five suites should pass once every bug is fixed
+npm run test:cart     # or verify one suite at a time
 ```
 
-Or run GitHub Actions workflow **Verify fix (green path)**.
+Or run GitHub Actions workflow **Verify fix (green path)** (input `suite`).

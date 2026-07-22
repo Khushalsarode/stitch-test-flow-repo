@@ -1,8 +1,13 @@
 name: Verify fix (green path)
 
-# Run manually AFTER Stitch merges a fix — proves JWT_SECRET guard + tests pass.
+# Run manually AFTER Stitch merges a fix — proves the suite passes.
 on:
   workflow_dispatch:
+    inputs:
+      suite:
+        description: "Suite to verify (auth|cart|api|config|utils|all)"
+        required: false
+        default: "all"
 
 jobs:
   test-green:
@@ -15,7 +20,12 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Run tests with JWT_SECRET set
-        run: npm test
         env:
           NODE_ENV: test
           JWT_SECRET: stitch-demo-secret-for-green-ci
+        run: |
+          if [ "${{ inputs.suite }}" = "all" ] || [ -z "${{ inputs.suite }}" ]; then
+            npm test
+          else
+            npm run "test:${{ inputs.suite }}"
+          fi

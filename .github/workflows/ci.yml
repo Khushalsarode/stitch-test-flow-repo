@@ -14,10 +14,10 @@ on:
     branches: [main, master]
   workflow_dispatch:
     inputs:
-      branch:
-        description: "Branch context for Stitch demo (logged only)"
+      suite:
+        description: "Test suite to run (auth|cart|api|config|utils|all)"
         required: false
-        default: "main"
+        default: ""
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -33,7 +33,41 @@ jobs:
           node-version: "20"
           cache: npm
       - run: npm ci
-      - name: Run tests (JWT_SECRET intentionally omitted)
-        run: npm test
+
+      # Each branch exercises a different deliberate failure so Stitch has a
+      # distinct diagnosis + fix per branch:
+      #   main / master  -> auth   (JWT_SECRET missing from CI env)
+      #   dev / staging  -> cart   (off-by-one loop in cartTotal)
+      #   feature/**     -> api    (missing null-check in userSummary)
+      #   release/**     -> config (maxRetries is a string, not an integer)
+      #   hotfix/**      -> utils  (report date not ISO 8601)
+      - name: Select test suite for this branch
+        id: suite
+        env:
+          BRANCH: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+          REQUESTED: ${{ inputs.suite }}
+        run: |
+          if [ -n "$REQUESTED" ]; then
+            suite="$REQUESTED"
+          else
+            case "$BRANCH" in
+              dev|staging)  suite="cart" ;;
+              feature/*)    suite="api" ;;
+              release/*)    suite="config" ;;
+              hotfix/*)     suite="utils" ;;
+              *)            suite="auth" ;;
+            esac
+          fi
+          echo "Branch '$BRANCH' -> suite '$suite'"
+          echo "suite=$suite" >> "$GITHUB_OUTPUT"
+
+      - name: Run suite (deliberate failure until Stitch fixes it)
         env:
           NODE_ENV: test
+          # JWT_SECRET intentionally omitted — keeps the auth suite red on main.
+        run: |
+          if [ "${{ steps.suite.outputs.suite }}" = "all" ]; then
+            npm test
+          else
+            npm run "test:${{ steps.suite.outputs.suite }}"
+          fi

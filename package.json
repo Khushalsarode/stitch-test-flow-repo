@@ -1,11 +1,16 @@
 {
   "name": "stitch-test-flow-repo",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "Deliberate CI failure repo for Stitch end-to-end testing before submission.",
+  "description": "Deliberate CI failure repo for Stitch end-to-end testing — each branch fails a different suite.",
   "type": "module",
   "scripts": {
-    "test": "node --test auth/*.test.js"
+    "test": "node --test auth/token.test.js cart/cart.test.js api/user.test.js config/limits.test.js utils/dates.test.js",
+    "test:auth": "node --test auth/token.test.js",
+    "test:cart": "node --test cart/cart.test.js",
+    "test:api": "node --test api/user.test.js",
+    "test:config": "node --test config/limits.test.js",
+    "test:utils": "node --test utils/dates.test.js"
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.2"
